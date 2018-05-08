@@ -1,0 +1,200 @@
+body {
+  color: #3a3837; }
+
+.App {
+  background-color: #ececec;
+  height: 100vh; }
+
+.SignIn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+  color: #f9f9f9;
+  background-color: #32655d; }
+  .SignIn > div {
+    display: inline-block; }
+  .SignIn h1 {
+    text-transform: uppercase; }
+  .SignIn .button {
+    color: #f9f9f9;
+    background-color: #361D44; }
+    .SignIn .button:hover, .SignIn .button:active {
+      color: #f9f9f9;
+      background-color: #281532; }
+
+.TribeChat {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  max-width: 1400px;
+  background-color: #fff;
+  margin-left: 0 !important; }
+
+.HeaderBar {
+  z-index: 1;
+  background-color: #3a3837;
+  box-shadow: rgba(58, 56, 55, 0.1) 0px 3px 1px;
+  color: #f9f9f9; }
+  .HeaderBar > .ui.grid > .column:first-child {
+    border-right: 2px solid #545150; }
+  .HeaderBar .UserTopBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; }
+  .HeaderBar .UserTopBar > .UserItem,
+  .HeaderBar .ConversationTopBar > .UserItem {
+    padding: 0 0 0 10px; }
+  .HeaderBar .UserItem.-connection::after {
+    bottom: 0;
+    left: 15px; }
+
+.MainWindow {
+  flex: 1; }
+  .MainWindow > .ui.grid {
+    height: 100%;
+    margin-top: 0;
+    margin-bottom: 0; }
+  .MainWindow > .ui.grid > .column:first-child {
+    background-color: #32655d;
+    border-right: 2px solid #21433e; }
+  .MainWindow > .ui.grid > .column:last-child {
+    border-right: 1px solid #ccc; }
+
+.ConversationsBar {
+  color: #f9f9f9;
+  text-align: center;
+  height: 100%; }
+  .ConversationsBar > div {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 70px); }
+  .ConversationsBar > div > ul {
+    flex-grow: 1;
+    height: 1px;
+    padding: 0;
+    list-style: none;
+    height: calc(100vh - 210px);
+    margin-right: -1rem;
+    overflow-y: scroll;
+    direction: rtl;
+    margin-left: -3rem;
+    padding-left: 2rem; }
+  .ConversationsBar > div > ul > li {
+    direction: ltr;
+    margin-right: 1rem;
+    margin-bottom: 10px;
+    cursor: pointer; }
+    .ConversationsBar > div > ul > li.selected {
+      color: #3a3837;
+      background-color: #75bbb0;
+      border-radius: 10px 0 0 10px;
+      margin-right: -1rem; }
+
+.ConnectionModal {
+  word-wrap: break-word; }
+  .ConnectionModal .my-identifier {
+    margin-bottom: 10px; }
+
+.UserItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 15px; }
+  .UserItem > .image {
+    width: 54px;
+    background-color: #fff;
+    box-shadow: 0px 0px 3px 3px rgba(204, 204, 204, 0.8); }
+  .UserItem > strong {
+    margin-left: 10px;
+    font-size: 16px;
+    font-weight: bold; }
+
+.UserItem.-connection::after {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  bottom: 15px;
+  left: 18px;
+  border-radius: 10px; }
+
+.UserItem.-connection.-connected::after {
+  background-color: #6CB359; }
+
+.UserItem.-connection.-disconnected::after {
+  background-color: #CC6571; }
+
+.ChatWindow {
+  display: flex;
+  flex-direction: column;
+  height: 100%; }
+
+.ChatDisplay {
+  flex-grow: 1;
+  height: calc(100vh - 230px);
+  overflow-y: auto;
+  margin-bottom: 1rem; }
+  .ChatDisplay.-align-bottom > div {
+    height: 100%;
+    justify-content: flex-end; }
+  .ChatDisplay > div {
+    display: flex;
+    flex-direction: column; }
+  .ChatDisplay .ChatMessage {
+    display: flex;
+    align-items: flex-start;
+    max-width: 47%;
+    padding: 10px; }
+    .ChatDisplay .ChatMessage.-right {
+      align-self: flex-end; }
+    .ChatDisplay .ChatMessage > .image {
+      width: 54px;
+      background-color: #fff;
+      box-shadow: 0px 0px 3px 3px rgba(204, 204, 204, 0.8); }
+    .ChatDisplay .ChatMessage > .msg-bubble {
+      position: relative;
+      width: fit-content;
+      background: #f1f1f1;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 0 15px; }
+      .ChatDisplay .ChatMessage > .msg-bubble > * {
+        display: block; }
+      .ChatDisplay .ChatMessage > .msg-bubble::after {
+        content: '';
+        position: absolute;
+        top: 20px;
+        width: 0;
+        height: 0;
+        border: 20px solid transparent;
+        border-top: 0;
+        margin-top: -20px; }
+    .ChatDisplay .ChatMessage.-left > .msg-bubble::after {
+      left: 0;
+      border-right-color: #f1f1f1;
+      border-left: 0;
+      margin-left: -12px; }
+    .ChatDisplay .ChatMessage.-right > .msg-bubble::after {
+      right: 0;
+      border-left-color: #f1f1f1;
+      border-right: 0;
+      margin-right: -12px; }
+
+.ChatInput {
+  position: relative; }
+  .ChatInput .form textarea {
+    padding-right: 60px; }
+  .ChatInput .chat-addons {
+    position: absolute;
+    top: 2px;
+    right: 2px; }
+    .ChatInput .chat-addons .icon.button {
+      display: block;
+      padding: 5px;
+      box-shadow: none; }
+
+/*# sourceMappingURL=App.css.map */
