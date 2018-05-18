@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 
 import {Grid} from 'semantic-ui-react';
 import HeaderBar from '../components/HeaderBar';
+import SignIn from './SignIn';
 import ConversationsBar from '../containers/ConversationsBar';
 import ChatWindow from '../containers/ChatWindow';
 import '../styles/App.css';
@@ -15,8 +16,9 @@ import {
     setAvatar as setFriendAvatar, setName as setFriendName,
     setUsername as setFriendUsername
 } from '../actions/friendActions';
-import IPFS from 'ipfs';
+ import IPFS from 'ipfs';
 import Room from 'ipfs-pubsub-room';
+import { RingLoader } from 'react-spinners';
 
 let room = {};
 let currentAddress = '';
@@ -35,16 +37,17 @@ const ipfs = new IPFS({
     }
 });
 
-ipfs.once('ready', () => ipfs.id((err, info) => {
-    if (err) { throw err; }
-    console.log('IPFS node ready with address ' + info.id);
-}));
-
 class App extends Component {
   constructor(props) {
     super(props);
     this.handleMakeConnection = this.handleMakeConnection.bind(this);
     this.handleSaveMessage = this.handleSaveMessage.bind(this);
+    this.state = {
+        loading: true
+    }
+    ipfs.on('ready', () => {
+        this.setState({loading:false});
+    })
   }
 
   handleMakeConnection(address) {
@@ -81,9 +84,13 @@ class App extends Component {
     room.broadcast(msg);
   }
 
+  isUserSignedIn() {
+      return localStorage.getItem("login-address") ? true : false;
+  }
+
   componentWillMount() {
     // (!isUserSignedIn()) return;
-      let web3 = new Web3(window.web3.currentProvider);
+   /*   let web3 = new Web3(window.web3.currentProvider);
       let me = this;
       web3.version.getNode(function(error, result) {
           if(!error) {
@@ -94,28 +101,37 @@ class App extends Component {
           else {
               console.error(error);
           }
-      });
+      });*/
   }
 
   render() {
     return (
-      <div className="App">
-       <div className="TribeChat">
-          <HeaderBar data={{ user: this.props.user, friend: this.props.chatFriend }} />
-          <div className="MainWindow">
-            <Grid padded>
-              <Grid.Column width={4}>
-                <ConversationsBar onMakeConnection={this.handleMakeConnection} />
-              </Grid.Column>
-              <Grid.Column width={12}>
-                {this.props.displayConversation
-                  ? <ChatWindow onSendMessage={this.handleSaveMessage} />
-                  : ''
-                }
-              </Grid.Column>
-            </Grid>
-          </div>
-       </div>
+      <div className="App sweet-loading">
+          <RingLoader
+              color={'#123abc'}
+              style={ {position: 'absolute', top: '50%', left: '50%' }}
+              loading={this.state.loading}
+          >
+              {!this.isUserSignedIn()
+                  ? <SignIn />
+                  : <div className="TribeChat">
+                      <HeaderBar data={{ user: this.props.user, friend: this.props.chatFriend }} />
+                      <div className="MainWindow">
+                          <Grid padded>
+                              <Grid.Column width={4}>
+                                  <ConversationsBar onMakeConnection={this.handleMakeConnection} />
+                              </Grid.Column>
+                              <Grid.Column width={12}>
+                                  {this.props.displayConversation
+                                      ? <ChatWindow onSendMessage={this.handleSaveMessage} />
+                                      : ''
+                                  }
+                              </Grid.Column>
+                          </Grid>
+                      </div>
+                  </div>
+              }
+          </RingLoader>
       </div>
     );
   }
@@ -159,13 +175,3 @@ function mapDispatchToProps(dispatch) {
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
 
-function getSignedInUser() {
-  //const userData = loadUserData();
-  //const profile = new Person(loadUserData().profile);
-  return {
-    address: currentAddress,
-    name: 'test',
-    username: 'test',
-    avatar: ''
-  };
-}

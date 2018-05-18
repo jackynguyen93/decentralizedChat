@@ -10,6 +10,8 @@ class UserTopBar extends Component {
 
   handleSignOut(e) {
     e.preventDefault();
+    localStorage.clear();
+      window.location = "/";
    // signUserOut(window.location.origin);
   }
 
