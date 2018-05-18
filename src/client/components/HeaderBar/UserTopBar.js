@@ -11,7 +11,7 @@ class UserTopBar extends Component {
   handleSignOut(e) {
     e.preventDefault();
     localStorage.clear();
-      window.location = "/";
+    window.location.reload();
    // signUserOut(window.location.origin);
   }
 

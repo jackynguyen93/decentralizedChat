@@ -8,6 +8,7 @@ import {
 import {addConversation, addMessage, displayConversation} from "../actions/conversationActions";
 import {setConnected} from "../actions/connectionActions";
 import {connect} from "react-redux";
+import {getSignedInUser} from "../service/UserService";
 
 class SignIn extends Component {
   constructor(props) {
@@ -24,26 +25,18 @@ class SignIn extends Component {
   handleSignInSuccessful({ publicAddress, signature }) {
     console.log("Sign in with signature ---- "+  signature);
     localStorage.setItem("login-address", publicAddress);
-    window.location = "/";
+    window.location.reload();
   }
 
-  getSignedInUser(address) {
-    //const userData = loadUserData();
-    //const profile = new Person(loadUserData().profile);
-    return {
-        address: address,
-        name: 'test',
-        username: 'test',
-        avatar: ''
-    };
-  }
 
   handleSignIn() {
     let me = this;
-    this.setState({ pending: true });
+    let web3;
     if (!window.web3) {
         window.alert('Please install MetaMask first.');
         return;
+    } else {
+        web3 = window.web3;
     }
     if (!web3) {
         // We don't know window.web3 version, so we use our own instance of web3
@@ -54,9 +47,11 @@ class SignIn extends Component {
         window.alert('Please activate MetaMask first.');
         return;
     }
+    this.setState({ pending: true });
     const publicAddress = web3.eth.coinbase.toLowerCase();
+    console.log(publicAddress);
     me.props.rxSetUserAddress(publicAddress);
-    me.props.rxSetUser(me.getSignedInUser(publicAddress));
+    me.props.rxSetUser(getSignedInUser(publicAddress));
 
     new Promise((resolve, reject) =>
         web3.personal.sign(

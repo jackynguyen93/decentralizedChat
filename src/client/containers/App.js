@@ -16,14 +16,16 @@ import {
     setAvatar as setFriendAvatar, setName as setFriendName,
     setUsername as setFriendUsername
 } from '../actions/friendActions';
- import IPFS from 'ipfs';
+ //import IPFS from 'ipfs';
 import Room from 'ipfs-pubsub-room';
-import { RingLoader } from 'react-spinners';
+import { BarLoader } from 'react-spinners';
+import {getSignedInUser} from "../service/UserService";
+
 
 let room = {};
 let currentAddress = '';
 let currentPeer = '';
-const ipfs = new IPFS({
+const ipfs = new Ipfs({
     repo: 'ipfs/pubsub-demo/' + Math.random(),
     EXPERIMENTAL: {
         pubsub: true
@@ -85,53 +87,46 @@ class App extends Component {
   }
 
   isUserSignedIn() {
-      return localStorage.getItem("login-address") ? true : false;
+      return localStorage.getItem("login-address")? true : false;
   }
 
   componentWillMount() {
-    // (!isUserSignedIn()) return;
-   /*   let web3 = new Web3(window.web3.currentProvider);
-      let me = this;
-      web3.version.getNode(function(error, result) {
-          if(!error) {
-              currentAddress = web3.eth.accounts[0];
-              me.props.rxSetUserAddress(web3.eth.accounts[0]);
-              me.props.rxSetUser(getSignedInUser());
-          }
-          else {
-              console.error(error);
-          }
-      });*/
+      let loginAddress = localStorage.getItem("login-address");
+      if (loginAddress) {
+          this.props.rxSetUserAddress(loginAddress);
+          this.props.rxSetUser(getSignedInUser(loginAddress));
+      }
   }
 
   render() {
     return (
       <div className="App sweet-loading">
-          <RingLoader
+          <BarLoader
               color={'#123abc'}
-              style={ {position: 'absolute', top: '50%', left: '50%' }}
+              width = {100}
+              widthUnit = {"%"}
               loading={this.state.loading}
-          >
-              {!this.isUserSignedIn()
-                  ? <SignIn />
-                  : <div className="TribeChat">
-                      <HeaderBar data={{ user: this.props.user, friend: this.props.chatFriend }} />
-                      <div className="MainWindow">
-                          <Grid padded>
-                              <Grid.Column width={4}>
-                                  <ConversationsBar onMakeConnection={this.handleMakeConnection} />
-                              </Grid.Column>
-                              <Grid.Column width={12}>
-                                  {this.props.displayConversation
-                                      ? <ChatWindow onSendMessage={this.handleSaveMessage} />
-                                      : ''
-                                  }
-                              </Grid.Column>
-                          </Grid>
-                      </div>
+          />
+          {!this.isUserSignedIn()
+              ? <SignIn />
+              : <div className="TribeChat">
+                  <HeaderBar data={{ user: this.props.user, friend: this.props.chatFriend }} />
+                  <div className="MainWindow">
+                      <Grid padded>
+                          <Grid.Column width={4}>
+                              <ConversationsBar onMakeConnection={this.handleMakeConnection} />
+                          </Grid.Column>
+                          <Grid.Column width={12}>
+                              {this.props.displayConversation
+                                  ? <ChatWindow onSendMessage={this.handleSaveMessage} />
+                                  : ''
+                              }
+                          </Grid.Column>
+                      </Grid>
                   </div>
-              }
-          </RingLoader>
+              </div>
+          }
+
       </div>
     );
   }
