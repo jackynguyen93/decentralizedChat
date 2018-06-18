@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button } from 'semantic-ui-react';
+import { Button, Input } from 'semantic-ui-react';
 import {setAddress, setUser} from "../actions/userActions";
 import {
     setAvatar as setFriendAvatar, setName as setFriendName,
@@ -13,9 +13,10 @@ import {getSignedInUser} from "../service/UserService";
 class SignIn extends Component {
   constructor(props) {
     super(props);
-    this.state = { pending: false };
+    this.state = { pending: false , username: undefined};
     this.nonce = Math.floor(1000000000 + Math.random()*(9999999999 - 1000000000));
     this.handleSignIn = this.handleSignIn.bind(this);
+    this.handleSignInSuccessful = this.handleSignInSuccessful.bind(this);
   }
 
   componentWillMount() {
@@ -24,10 +25,13 @@ class SignIn extends Component {
 
   handleSignInSuccessful({ publicAddress, signature }) {
     console.log("Sign in with signature ---- "+  signature);
-    localStorage.setItem("login-address", publicAddress);
+    localStorage.setItem("login-address", JSON.stringify(getSignedInUser(this.state.username, publicAddress, signature)));
     window.location.reload();
   }
 
+  handleUsername = (e, data) => {
+    this.setState({ username: data.value });
+  }
 
   handleSignIn() {
     let me = this;
@@ -51,7 +55,7 @@ class SignIn extends Component {
     const publicAddress = web3.eth.coinbase.toLowerCase();
     console.log(publicAddress);
     me.props.rxSetUserAddress(publicAddress);
-    me.props.rxSetUser(getSignedInUser(publicAddress));
+    me.props.rxSetUser(getSignedInUser(this.state.username, publicAddress));
 
     new Promise((resolve, reject) =>
         web3.personal.sign(
@@ -72,6 +76,8 @@ class SignIn extends Component {
       <div className="SignIn">
         <div>
           <h1>Decentralized Chat</h1>
+          <Input placeholder='Enter username' onChange={this.handleUsername} fluid />
+          <br/>
           <Button disabled={pending} onClick={this.handleSignIn} size="massive" >
             {pending ? 'Signing in ...' : 'Sign in with Metamask'}
           </Button>
