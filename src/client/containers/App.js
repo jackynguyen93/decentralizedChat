@@ -91,10 +91,10 @@ class App extends Component {
   }
 
   componentWillMount() {
-      let loginAddress = localStorage.getItem("login-address");
-      if (loginAddress) {
-          this.props.rxSetUserAddress(loginAddress);
-          this.props.rxSetUser(getSignedInUser(loginAddress));
+      let userLogin = localStorage.getItem("login-address");
+      if (userLogin) {
+          this.props.rxSetUserAddress(JSON.parse(userLogin).address);
+          this.props.rxSetUser(JSON.parse(userLogin));
       }
   }
 
