@@ -8,6 +8,7 @@ import { addMessage } from '../actions/conversationActions';
 class ChatWindow extends Component {
   constructor(props) {
     super(props);
+    this.gun = props.gun;
     this.handleSendMessage = this.handleSendMessage.bind(this);
   }
 
@@ -18,7 +19,7 @@ class ChatWindow extends Component {
       date: Date.now()
     };
     this.props.rxAddMessage(this.props.address, msg);
-    this.props.onSendMessage(text);
+    this.props.onSendMessage(this.props.address, text);
   }
 
   render() {

@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "*",
+    "gun": "^0.9.9993",
     "ipfs": "^0.28.2",
     "ipfs-pubsub-room": "*",
     "lzutf8": "^0.5.0",

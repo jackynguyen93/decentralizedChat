@@ -20,6 +20,7 @@ import {
 import Room from 'ipfs-pubsub-room';
 import { BarLoader } from 'react-spinners';
 import {getSignedInUser} from "../service/UserService";
+import Gun from 'gun';
 
 
 let room = {};
@@ -42,6 +43,9 @@ const ipfs = new Ipfs({
 class App extends Component {
   constructor(props) {
     super(props);
+    this.gun=Gun(['https://gunjs.herokuapp.com/gun']);
+    window.gun = this.gun; //To have access to gun object in browser console
+
     this.handleMakeConnection = this.handleMakeConnection.bind(this);
     this.handleSaveMessage = this.handleSaveMessage.bind(this);
     this.state = {
@@ -53,13 +57,15 @@ class App extends Component {
   }
 
   handleMakeConnection(address) {
-    room = Room(ipfs, address);
+    let me = this;
+   /* room = Room(ipfs, address);
     room.on('subscribed', () => {
         console.log('Now connected!');
         this.props.rxDisplayConversation(address);
         this.props.rxSetConnectionStatus(address, true);
         this.props.rxDisplayConversation(address);
-        this.props.rxAddConversation(address, []);
+        let conversation = me.get('conversation-' + address);
+        this.props.rxAddConversation(address, conversation);
     });
     room.on('message', (message) => {
         if (message.from !== ipfs._peerInfo.id._idB58String)
@@ -68,7 +74,19 @@ class App extends Component {
     room.on('peer joined', (peer) => {
       console.log('peer joined ' + peer);
     });
-
+*/
+    this.props.rxDisplayConversation(address);
+    this.props.rxSetConnectionStatus(address, true);
+    this.props.rxDisplayConversation(address);
+    let conversation = this.gun.get('conversation-'+123);
+    this.props.rxAddConversation(address, []);
+    conversation.get('new_message').on((data) => {
+      if (data) {
+        let message = JSON.parse(data);
+        if (message.from !== address)
+          this.handleReceiveMessage(address, message.content);
+      }
+    })
   }
 
   handleReceiveMessage(address, text) {
@@ -80,10 +98,12 @@ class App extends Component {
     this.props.rxAddMessage(address, msg);
   }
 
-  handleSaveMessage(msg) {
+  handleSaveMessage(address, msg) {
     /*const dp2p = p2p[this.props.displayConversation];
     dp2p.sendMessage(msg);*/
-    room.broadcast(msg);
+    //room.broadcast(msg);
+
+    this.gun.get('conversation-' + 123).get('new_message').put(JSON.stringify({from: address, content: msg,  date: Date.now()}));
   }
 
   isUserSignedIn() {
@@ -118,7 +138,7 @@ class App extends Component {
                           </Grid.Column>
                           <Grid.Column width={12}>
                               {this.props.displayConversation
-                                  ? <ChatWindow onSendMessage={this.handleSaveMessage} />
+                                  ? <ChatWindow gun={this.gun} onSendMessage={this.handleSaveMessage} />
                                   : ''
                               }
                           </Grid.Column>
